@@ -204,11 +204,11 @@ fn default_location() -> String {
 /// new project failed with EPERM. https://github.com/jub0t/Concat/issues/299
 fn location_on(os: &str, desktop: Option<PathBuf>, home: impl Fn(&str) -> String) -> String {
     match os {
-        "android" => home("Concat"),
-        "ios" => home("Documents/Concat"),
+        "android" => home("ClipCat"),
+        "ios" => home("Documents/ClipCat"),
         _ => desktop
-            .map(|desktop| desktop.join("Concat").to_string_lossy().into_owned())
-            .unwrap_or_else(|| home("Desktop/Concat")),
+            .map(|desktop| desktop.join("ClipCat").to_string_lossy().into_owned())
+            .unwrap_or_else(|| home("Desktop/ClipCat")),
     }
 }
 
@@ -612,12 +612,12 @@ mod tests {
             "/home/Documents/Concat"
         );
         assert_eq!(location_on("ios", None, home), "/home/Documents/Concat");
-        assert_eq!(location_on("android", None, home), "/home/Concat");
+        assert_eq!(location_on("android", None, home), "/home/ClipCat");
         assert_eq!(
             PathBuf::from(location_on("macos", desktop(), home)),
-            Path::new("/desk").join("Concat")
+            Path::new("/desk").join("ClipCat")
         );
-        assert_eq!(location_on("linux", None, home), "/home/Desktop/Concat");
+        assert_eq!(location_on("linux", None, home), "/home/Desktop/ClipCat");
     }
 
     /// The next untitled name skips every folder already there, and starts

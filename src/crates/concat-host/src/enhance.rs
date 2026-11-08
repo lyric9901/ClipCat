@@ -706,18 +706,21 @@ mod tests {
     /// it. Needs the fetched model and ffmpeg on the path.
     #[test]
     fn a_span_is_enhanced_on_its_own() {
-        let Some(data) = ["app.concat.editor", "org.standalones.concat"]
-            .iter()
-            .filter_map(|id| {
-                let p = PathBuf::from(std::env::var_os("HOME")?)
-                    .join("Library/Application Support")
-                    .join(id);
-                p.join("cutout-models/realesr-general-x4v3.onnx")
-                    .is_file()
-                    .then_some(p)
-            })
-            .next()
-        else {
+        let Some(data) = [
+            "app.clipcat.editor",
+            "app.concat.editor",
+            "org.standalones.concat",
+        ]
+        .iter()
+        .filter_map(|id| {
+            let p = PathBuf::from(std::env::var_os("HOME")?)
+                .join("Library/Application Support")
+                .join(id);
+            p.join("cutout-models/realesr-general-x4v3.onnx")
+                .is_file()
+                .then_some(p)
+        })
+        .next() else {
             eprintln!("no Enhance model here; skipped");
             return;
         };
@@ -816,18 +819,22 @@ mod tests {
         if !made.is_ok_and(|s| s.success()) {
             return;
         }
-        let data = ["app.concat.editor", "org.standalones.concat"]
-            .iter()
-            .filter_map(|id| {
-                let p = PathBuf::from(std::env::var_os("HOME")?)
-                    .join("Library/Application Support")
-                    .join(id);
-                p.join("cutout-models/realesr-general-x4v3.onnx")
-                    .is_file()
-                    .then_some(p)
-            })
-            .next()
-            .expect("the model");
+        let data = [
+            "app.clipcat.editor",
+            "app.concat.editor",
+            "org.standalones.concat",
+        ]
+        .iter()
+        .filter_map(|id| {
+            let p = PathBuf::from(std::env::var_os("HOME")?)
+                .join("Library/Application Support")
+                .join(id);
+            p.join("cutout-models/realesr-general-x4v3.onnx")
+                .is_file()
+                .then_some(p)
+        })
+        .next()
+        .expect("the model");
         let enhancers = Enhancers::new(&data);
         let target = dir.join("out.mp4");
         let _ = std::fs::remove_file(&target);
@@ -851,18 +858,21 @@ mod tests {
     /// GPU working in half floats. Needs the fetched model and a GPU.
     #[test]
     fn the_gpu_enhances_as_onnx_runtime_does() {
-        let Some(file) = ["app.concat.editor", "org.standalones.concat"]
-            .iter()
-            .filter_map(|id| {
-                let home = std::env::var_os("HOME")?;
-                let file = PathBuf::from(home)
-                    .join("Library/Application Support")
-                    .join(id)
-                    .join("cutout-models/realesr-general-x4v3.onnx");
-                file.is_file().then_some(file)
-            })
-            .next()
-        else {
+        let Some(file) = [
+            "app.clipcat.editor",
+            "app.concat.editor",
+            "org.standalones.concat",
+        ]
+        .iter()
+        .filter_map(|id| {
+            let home = std::env::var_os("HOME")?;
+            let file = PathBuf::from(home)
+                .join("Library/Application Support")
+                .join(id)
+                .join("cutout-models/realesr-general-x4v3.onnx");
+            file.is_file().then_some(file)
+        })
+        .next() else {
             eprintln!("no Enhance model here; skipped");
             return;
         };

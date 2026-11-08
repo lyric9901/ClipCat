@@ -62,8 +62,9 @@ host() {
   if [ "${1:-}" = "--sde" ]; then sde=$2; shift 2; fi
   [ $# -eq 1 ] || { echo "usage: $0 [--sde SDE64] DIR" >&2; exit 2; }
   dir=$(cd "$1" && pwd)
-  local bin="$dir/concat"
-  [ -x "$bin" ] || fail "$bin is not there"
+  local bin="$dir/clipcat"
+  [ -x "$bin" ] || bin="$dir/concat"
+  [ -x "$bin" ] || fail "neither clipcat nor concat is in $dir"
 
   # The build's own environment points at the FFmpeg it linked; the
   # folder has to stand without it.

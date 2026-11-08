@@ -108,11 +108,11 @@ Source: "{#Stage}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs crea
 Source: "..\icons\clipcat.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{autoprograms}\ClipCat"; Filename: "{app}\concat.exe"; IconFilename: "{app}\clipcat.ico"
+Name: "{autoprograms}\ClipCat"; Filename: "{app}\clipcat.exe"; IconFilename: "{app}\clipcat.ico"
 ; The way in when a graphics driver draws the window as coloured squares:
 ; it turns off Settings > General > Draw on the GPU, which that window hides.
-Name: "{autoprograms}\ClipCat (safe graphics)"; Filename: "{app}\concat.exe"; Parameters: "--software"; IconFilename: "{app}\clipcat.ico"
-Name: "{autodesktop}\ClipCat"; Filename: "{app}\concat.exe"; IconFilename: "{app}\clipcat.ico"; Tasks: desktopicon
+Name: "{autoprograms}\ClipCat (safe graphics)"; Filename: "{app}\clipcat.exe"; Parameters: "--software"; IconFilename: "{app}\clipcat.ico"
+Name: "{autodesktop}\ClipCat"; Filename: "{app}\clipcat.exe"; IconFilename: "{app}\clipcat.ico"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\concat.exe"; Description: "{cm:LaunchProgram,ClipCat}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\clipcat.exe"; Description: "{cm:LaunchProgram,ClipCat}"; Flags: nowait postinstall skipifsilent

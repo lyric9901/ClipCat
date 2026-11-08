@@ -15,7 +15,7 @@ description = "ClipCat, the editor window: the Slint front end that drives the e
 path = "src/lib.rs"
 
 [[bin]]
-name = "concat"
+name = "clipcat"
 path = "src/main.rs"
 
 # Slint is taken under its GPL-3.0-only option to sit beside the AGPL engine.

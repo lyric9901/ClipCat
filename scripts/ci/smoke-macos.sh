@@ -37,8 +37,9 @@ expect_ok() {
 
 [ $# -eq 1 ] || { echo "usage: $0 Concat.app" >&2; exit 2; }
 app=$1
-bin="$app/Contents/MacOS/concat"
-[ -x "$bin" ] || fail "$bin is not there"
+bin="$app/Contents/MacOS/clipcat"
+[ -x "$bin" ] || bin="$app/Contents/MacOS/concat"
+[ -x "$bin" ] || fail "neither clipcat nor concat is in $app"
 
 say "the signature"
 codesign --verify --deep --strict --verbose=2 "$app" || fail "the bundle's signature does not verify"

@@ -693,15 +693,18 @@ mod tests {
             return;
         };
         let support = std::path::Path::new(&home).join("Library/Application Support");
-        let Some(bytes) = ["app.concat.editor", "org.standalones.concat"]
-            .iter()
-            .map(|id| {
-                support
-                    .join(id)
-                    .join("cutout-models/realesr-general-x4v3.onnx")
-            })
-            .find_map(|file| std::fs::read(file).ok())
-        else {
+        let Some(bytes) = [
+            "app.clipcat.editor",
+            "app.concat.editor",
+            "org.standalones.concat",
+        ]
+        .iter()
+        .map(|id| {
+            support
+                .join(id)
+                .join("cutout-models/realesr-general-x4v3.onnx")
+        })
+        .find_map(|file| std::fs::read(file).ok()) else {
             eprintln!("no Enhance model on this machine");
             return;
         };

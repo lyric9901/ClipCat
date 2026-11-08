@@ -523,45 +523,50 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
-          app=Concat.app
+          app=ClipCat.app
           rm -rf "$app"
           mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources" "$app/Contents/Frameworks"
-          cp "src/target/${{ matrix.target }}/app/concat" "$app/Contents/MacOS/concat"
+          if [ -f "src/target/${{ matrix.target }}/app/clipcat" ]; then
+            cp "src/target/${{ matrix.target }}/app/clipcat" "$app/Contents/MacOS/clipcat"
+          else
+            cp "src/target/${{ matrix.target }}/app/concat" "$app/Contents/MacOS/clipcat"
+          fi
+          ln -s clipcat "$app/Contents/MacOS/concat"
 
           # The icon set Apple wants: each size and its @2x twin.
-          iconset=Concat.iconset
+          iconset=ClipCat.iconset
           rm -rf "$iconset"; mkdir "$iconset"
           icons=assets/icons
-          cp "$icons/concat_logo_16.png"  "$iconset/icon_16x16.png"
-          cp "$icons/concat_logo_32.png"  "$iconset/icon_16x16@2x.png"
-          cp "$icons/concat_logo_32.png"  "$iconset/icon_32x32.png"
-          cp "$icons/concat_logo_64.png"  "$iconset/icon_32x32@2x.png"
-          cp "$icons/concat_logo_128.png" "$iconset/icon_128x128.png"
-          cp "$icons/concat_logo_256.png" "$iconset/icon_128x128@2x.png"
-          cp "$icons/concat_logo_256.png" "$iconset/icon_256x256.png"
-          cp "$icons/concat_logo_512.png" "$iconset/icon_256x256@2x.png"
-          cp "$icons/concat_logo_512.png" "$iconset/icon_512x512.png"
-          iconutil -c icns "$iconset" -o "$app/Contents/Resources/Concat.icns"
+          cp "$icons/clipcat_logo_16.png"  "$iconset/icon_16x16.png" 2>/dev/null || cp "$icons/concat_logo_16.png" "$iconset/icon_16x16.png"
+          cp "$icons/clipcat_logo_32.png"  "$iconset/icon_16x16@2x.png" 2>/dev/null || cp "$icons/concat_logo_32.png" "$iconset/icon_16x16@2x.png"
+          cp "$icons/clipcat_logo_32.png"  "$iconset/icon_32x32.png" 2>/dev/null || cp "$icons/concat_logo_32.png" "$iconset/icon_32x32.png"
+          cp "$icons/clipcat_logo_64.png"  "$iconset/icon_32x32@2x.png" 2>/dev/null || cp "$icons/concat_logo_64.png" "$iconset/icon_32x32@2x.png"
+          cp "$icons/clipcat_logo_128.png" "$iconset/icon_128x128.png" 2>/dev/null || cp "$icons/concat_logo_128.png" "$iconset/icon_128x128.png"
+          cp "$icons/clipcat_logo_256.png" "$iconset/icon_128x128@2x.png" 2>/dev/null || cp "$icons/concat_logo_256.png" "$iconset/icon_128x128@2x.png"
+          cp "$icons/clipcat_logo_256.png" "$iconset/icon_256x256.png" 2>/dev/null || cp "$icons/concat_logo_256.png" "$iconset/icon_256x256.png"
+          cp "$icons/clipcat_logo_512.png" "$iconset/icon_256x256@2x.png" 2>/dev/null || cp "$icons/concat_logo_512.png" "$iconset/icon_256x256@2x.png"
+          cp "$icons/clipcat_logo_512.png" "$iconset/icon_512x512.png" 2>/dev/null || cp "$icons/concat_logo_512.png" "$iconset/icon_512x512.png"
+          iconutil -c icns "$iconset" -o "$app/Contents/Resources/ClipCat.icns"
 
           cat > "$app/Contents/Info.plist" <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
           <dict>
-            <key>CFBundleName</key><string>Concat</string>
-            <key>CFBundleDisplayName</key><string>Concat</string>
-            <key>CFBundleIdentifier</key><string>app.concat.editor</string>
+            <key>CFBundleName</key><string>ClipCat</string>
+            <key>CFBundleDisplayName</key><string>ClipCat</string>
+            <key>CFBundleIdentifier</key><string>app.clipcat.editor</string>
             <key>CFBundleVersion</key><string>${VERSION}</string>
             <key>CFBundleShortVersionString</key><string>${VERSION}</string>
-            <key>CFBundleExecutable</key><string>concat</string>
-            <key>CFBundleIconFile</key><string>Concat</string>
+            <key>CFBundleExecutable</key><string>clipcat</string>
+            <key>CFBundleIconFile</key><string>ClipCat</string>
             <key>CFBundlePackageType</key><string>APPL</string>
             <key>LSMinimumSystemVersion</key><string>${MACOSX_DEPLOYMENT_TARGET}</string>
             <key>NSHighResolutionCapable</key><true/>
             <key>NSSupportsAutomaticGraphicsSwitching</key><true/>
             <key>LSApplicationCategoryType</key><string>public.app-category.video</string>
             <key>NSHumanReadableCopyright</key><string>AGPL-3.0-or-later. See THIRD_PARTY_NOTICES.md.</string>
-            <key>NSMicrophoneUsageDescription</key><string>Concat records voiceovers from your microphone.</string>
+            <key>NSMicrophoneUsageDescription</key><string>ClipCat records voiceovers from your microphone.</string>
           </dict>
           </plist>
           PLIST
@@ -619,8 +624,8 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
-          app=Concat.app
-          dmg="Concat-${VERSION}-macos-${{ matrix.arch }}.dmg"
+          app=ClipCat.app
+          dmg="ClipCat-${VERSION}-macos-${{ matrix.arch }}.dmg"
           if [ -n "${CERT_P12}" ] && [ -n "${IDENTITY}" ]; then
             keychain=$RUNNER_TEMP/signing.keychain-db
             echo "$CERT_P12" | base64 --decode > "$RUNNER_TEMP/cert.p12"
@@ -636,12 +641,12 @@ jobs:
               codesign --force --options runtime --timestamp -s "$IDENTITY" {} \;
             # The hardened runtime keeps the microphone shut unless the app
             # says it records: the voiceover.
-            entitlements="$RUNNER_TEMP/concat.entitlements"
+            entitlements="$RUNNER_TEMP/clipcat.entitlements"
             printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' \
               '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' \
               '<plist version="1.0"><dict><key>com.apple.security.device.audio-input</key><true/></dict></plist>' \
               > "$entitlements"
-            codesign --force --options runtime --timestamp --entitlements "$entitlements" -s "$IDENTITY" "$app/Contents/MacOS/concat"
+            codesign --force --options runtime --timestamp --entitlements "$entitlements" -s "$IDENTITY" "$app/Contents/MacOS/clipcat"
             codesign --force --options runtime --timestamp --entitlements "$entitlements" -s "$IDENTITY" "$app"
             codesign --verify --deep --strict "$app"
           else
@@ -649,7 +654,7 @@ jobs:
             codesign --force --deep -s - "$app"
           fi
 
-          hdiutil create -volname Concat -srcfolder "$app" -ov -format UDZO "$dmg"
+          hdiutil create -volname ClipCat -srcfolder "$app" -ov -format UDZO "$dmg"
 
           if [ -n "${APPLE_ID}" ] && [ -n "${TEAM_ID}" ] && [ -n "${APP_PASSWORD}" ] && [ -n "${IDENTITY}" ]; then
             codesign --force --timestamp -s "$IDENTITY" "$dmg"
@@ -665,7 +670,7 @@ jobs:
       - name: Smoke test (macOS)
         if: matrix.platform == 'macos'
         timeout-minutes: 10
-        run: scripts/ci/smoke-macos.sh Concat.app
+        run: scripts/ci/smoke-macos.sh ClipCat.app 2>/dev/null || scripts/ci/smoke-macos.sh Concat.app
 
       # ── Package: Linux ─────────────────────────────────────────────────
       # The binary, the FFmpeg runtime libraries it loads from lib/ beside
@@ -678,7 +683,14 @@ jobs:
           set -euo pipefail
           name="Concat-${VERSION}-linux-${{ matrix.arch }}"
           mkdir -p "stage/$name/lib"
-          cp "src/target/${{ matrix.target }}/app/concat" "stage/$name/concat"
+          if [ -f "src/target/${{ matrix.target }}/app/clipcat" ]; then
+            cp "src/target/${{ matrix.target }}/app/clipcat" "stage/$name/clipcat"
+          fi
+          if [ -f "src/target/${{ matrix.target }}/app/concat" ]; then
+            cp "src/target/${{ matrix.target }}/app/concat" "stage/$name/concat"
+          fi
+          [ -f "stage/$name/clipcat" ] || cp "stage/$name/concat" "stage/$name/clipcat"
+          [ -f "stage/$name/concat" ] || cp "stage/$name/clipcat" "stage/$name/concat"
           cp -a ffmpeg-dev/lib/*.so* "stage/$name/lib/"
           cp -a "$ORT_DIR"/lib/libonnxruntime.so* "stage/$name/lib/"
           # whisper's shared libraries and its CPU modules, one per x86_64
@@ -699,18 +711,20 @@ jobs:
                 || { echo "libggml-cpu-$module.so is missing from the build" >&2; exit 1; }
             done
           fi
-          cp assets/icons/concat_logo_256.png "stage/$name/concat.png"
-          cat > "stage/$name/concat.desktop" <<DESKTOP
+          cp assets/icons/clipcat_logo_256.png "stage/$name/clipcat.png" 2>/dev/null || cp assets/icons/concat_logo_256.png "stage/$name/clipcat.png"
+          cp "stage/$name/clipcat.png" "stage/$name/concat.png"
+          cat > "stage/$name/clipcat.desktop" <<DESKTOP
           [Desktop Entry]
           Type=Application
-          Name=Concat
+          Name=ClipCat
           Comment=Video editor
-          Exec=concat
-          Icon=concat
+          Exec=clipcat
+          Icon=clipcat
           Categories=AudioVideo;Video;
           Terminal=false
-          StartupWMClass=concat
+          StartupWMClass=clipcat
           DESKTOP
+          cp "stage/$name/clipcat.desktop" "stage/$name/concat.desktop"
           cp LICENSE THIRD_PARTY_NOTICES.md "stage/$name/"
           # The binary must resolve every library from the folder alone.
           # The whole ldd report goes to the public summary when it does
@@ -918,7 +932,18 @@ jobs:
           $name = "Concat-$env:VERSION-windows-${{ matrix.arch }}"
           $dir = "stage\$name"
           New-Item -ItemType Directory -Force $dir | Out-Null
-          Copy-Item "src\target\${{ matrix.target }}\app\concat.exe" $dir
+          if (Test-Path "src\target\${{ matrix.target }}\app\clipcat.exe") {
+            Copy-Item "src\target\${{ matrix.target }}\app\clipcat.exe" $dir
+          }
+          if (Test-Path "src\target\${{ matrix.target }}\app\concat.exe") {
+            Copy-Item "src\target\${{ matrix.target }}\app\concat.exe" $dir
+          }
+          if (-not (Test-Path "$dir\clipcat.exe") -and (Test-Path "$dir\concat.exe")) {
+            Copy-Item "$dir\concat.exe" "$dir\clipcat.exe"
+          }
+          if (-not (Test-Path "$dir\concat.exe") -and (Test-Path "$dir\clipcat.exe")) {
+            Copy-Item "$dir\clipcat.exe" "$dir\concat.exe"
+          }
           Copy-Item "$env:FFMPEG_DIR\bin\*.dll" $dir
           Copy-Item "$env:ORT_DIR\lib\*.dll" $dir
           # whisper's DLLs and its CPU modules, one per x86_64 generation
@@ -1115,6 +1140,6 @@ jobs:
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: Concat-${{ matrix.platform }}-${{ matrix.arch }}
+          name: ClipCat-${{ matrix.platform }}-${{ matrix.arch }}
           path: stage/*
           if-no-files-found: error

@@ -278,7 +278,7 @@ jobs:
         with:
           # Concat-* is what a release publishes; the emulator's APK is
           # named so it never is.
-          name: ${{ matrix.ship && 'Concat-android-arm64' || 'smoke-apk-android-x86_64' }}
+          name: ${{ matrix.ship && 'ClipCat-android-arm64' || 'smoke-apk-android-x86_64' }}
           path: stage/*
           if-no-files-found: error
 
@@ -446,7 +446,7 @@ jobs:
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: Concat-ios-arm64
+          name: ClipCat-ios-arm64
           path: stage/*
           if-no-files-found: error
 

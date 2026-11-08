@@ -20,14 +20,15 @@ root=$(cd "$workspace/.." && pwd)
 version=$(sed -n 's/^version = "\(.*\)"/\1/p' "$workspace/Cargo.toml" | head -1)
 ios_min=${IPHONEOS_DEPLOYMENT_TARGET:-15.0}
 
-binary=$workspace/target/$target/$profile/concat
+binary=$workspace/target/$target/$profile/clipcat
+[ -f "$binary" ] || binary=$workspace/target/$target/$profile/concat
 [ -f "$binary" ] || { echo "no binary at $binary: build first" >&2; exit 1; }
 
-app=$workspace/target/$target/$profile/Concat.app
+app=$workspace/target/$target/$profile/ClipCat.app
 rm -rf "$app"
 mkdir -p "$app"
-cp "$binary" "$app/Concat"
-cp "$root/assets/icons/concat_logo_512.png" "$app/AppIcon.png" 2>/dev/null || true
+cp "$binary" "$app/ClipCat"
+cp "$root/assets/icons/clipcat_logo_512.png" "$app/AppIcon.png" 2>/dev/null || cp "$root/assets/icons/concat_logo_512.png" "$app/AppIcon.png" 2>/dev/null || true
 
 platform=iPhoneOS
 [ "$target" = aarch64-apple-ios-sim ] && platform=iPhoneSimulator
@@ -48,12 +49,12 @@ cat > "$app/Info.plist" <<PLIST
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CFBundleName</key><string>Concat</string>
-  <key>CFBundleDisplayName</key><string>Concat</string>
-  <key>CFBundleIdentifier</key><string>app.concat.editor</string>
+  <key>CFBundleName</key><string>ClipCat</string>
+  <key>CFBundleDisplayName</key><string>ClipCat</string>
+  <key>CFBundleIdentifier</key><string>app.clipcat.editor</string>
   <key>CFBundleVersion</key><string>${version}</string>
   <key>CFBundleShortVersionString</key><string>${version}</string>
-  <key>CFBundleExecutable</key><string>Concat</string>
+  <key>CFBundleExecutable</key><string>ClipCat</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleSupportedPlatforms</key><array><string>${platform}</string></array>
   <key>MinimumOSVersion</key><string>${ios_min}</string>

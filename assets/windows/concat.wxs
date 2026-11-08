@@ -52,7 +52,7 @@
       <Shortcut Id="StartMenuShortcut"
                 Name="ClipCat"
                 Description="ClipCat Video Editor"
-                Target="[INSTALLFOLDER]concat.exe"
+                Target="[INSTALLFOLDER]clipcat.exe"
                 WorkingDirectory="INSTALLFOLDER"
                 Icon="clipcat.ico" />
       <!-- The way in when a graphics driver draws the window as coloured
@@ -61,7 +61,7 @@
       <Shortcut Id="SafeGraphicsShortcut"
                 Name="ClipCat (safe graphics)"
                 Description="ClipCat, drawn in software"
-                Target="[INSTALLFOLDER]concat.exe"
+                Target="[INSTALLFOLDER]clipcat.exe"
                 Arguments="--software"
                 WorkingDirectory="INSTALLFOLDER"
                 Icon="clipcat.ico" />

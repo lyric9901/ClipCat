@@ -19,12 +19,12 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use serde::{Deserialize, Serialize};
 
-const MANIFEST: &str = "concat.json";
+const MANIFEST: &str = "clipcat.json";
 /// The manifest's earlier names, newest first. Projects created before a
 /// rename keep theirs forever: the manifest is read and written under the
 /// name it has, and only brand-new projects get the current one. A rename
 /// must never orphan an edit.
-const LEGACY_MANIFESTS: &[&str] = &["wolfcut.json"];
+const LEGACY_MANIFESTS: &[&str] = &["concat.json", "wolfcut.json"];
 
 /// The manifest file this project actually uses: the current name, a legacy
 /// name if that is what exists, the current name for a fresh folder.

@@ -51,22 +51,22 @@ TABLES = {
 # version to fill in. Installers and binaries, never an archive of a
 # folder - a person downloads the thing they run.
 BUNDLES = [
-    ("macos", "arm64", "dmg", "Concat-{v}-macos-arm64.dmg"),
-    ("macos", "x86_64", "dmg", "Concat-{v}-macos-x86_64.dmg"),
-    ("linux", "x86_64", "deb", "Concat-{v}-linux-x86_64.deb"),
-    ("linux", "x86_64", "rpm", "Concat-{v}-linux-x86_64.rpm"),
-    ("linux", "x86_64", "appimage", "Concat-{v}-x86_64.AppImage"),
-    ("linux", "x86_64", "pacman", "Concat-{v}-linux-x86_64.pkg.tar.zst"),
-    ("linux", "aarch64", "deb", "Concat-{v}-linux-aarch64.deb"),
-    ("linux", "aarch64", "rpm", "Concat-{v}-linux-aarch64.rpm"),
-    ("linux", "aarch64", "appimage", "Concat-{v}-aarch64.AppImage"),
-    ("linux", "aarch64", "pacman", "Concat-{v}-linux-aarch64.pkg.tar.zst"),
-    ("windows", "x86_64", "setup", "Concat-{v}-windows-x86_64-setup.exe"),
-    ("windows", "x86_64", "msi", "Concat-{v}-windows-x86_64.msi"),
-    ("windows", "aarch64", "setup", "Concat-{v}-windows-aarch64-setup.exe"),
-    ("windows", "aarch64", "msi", "Concat-{v}-windows-aarch64.msi"),
-    ("android", "arm64", "apk", "Concat-{v}-android-arm64.apk"),
-    ("ios", "arm64", "ipa", "Concat-{v}-ios-arm64.ipa"),
+    ("macos", "arm64", "dmg", "ClipCat-{v}-macos-arm64.dmg"),
+    ("macos", "x86_64", "dmg", "ClipCat-{v}-macos-x86_64.dmg"),
+    ("linux", "x86_64", "deb", "ClipCat-{v}-linux-x86_64.deb"),
+    ("linux", "x86_64", "rpm", "ClipCat-{v}-linux-x86_64.rpm"),
+    ("linux", "x86_64", "appimage", "ClipCat-{v}-x86_64.AppImage"),
+    ("linux", "x86_64", "pacman", "ClipCat-{v}-linux-x86_64.pkg.tar.zst"),
+    ("linux", "aarch64", "deb", "ClipCat-{v}-linux-aarch64.deb"),
+    ("linux", "aarch64", "rpm", "ClipCat-{v}-linux-aarch64.rpm"),
+    ("linux", "aarch64", "appimage", "ClipCat-{v}-aarch64.AppImage"),
+    ("linux", "aarch64", "pacman", "ClipCat-{v}-linux-aarch64.pkg.tar.zst"),
+    ("windows", "x86_64", "setup", "ClipCat-{v}-windows-x86_64-setup.exe"),
+    ("windows", "x86_64", "msi", "ClipCat-{v}-windows-x86_64.msi"),
+    ("windows", "aarch64", "setup", "ClipCat-{v}-windows-aarch64-setup.exe"),
+    ("windows", "aarch64", "msi", "ClipCat-{v}-windows-aarch64.msi"),
+    ("android", "arm64", "apk", "ClipCat-{v}-android-arm64.apk"),
+    ("ios", "arm64", "ipa", "ClipCat-{v}-ios-arm64.ipa"),
 ]
 
 
@@ -331,21 +331,23 @@ def release_manifest(version: str, tag: str, bundles: pathlib.Path | None) -> di
     # the one it installs with: binaries.linux.x86_64.deb.
     binaries: dict[str, dict] = {}
     for platform, arch, kind, stem in BUNDLES:
-        file = stem.format(v=version)
-        entry = {
-            "file": file,
-            "url": asset_url(tag, file),
-        }
-        if bundles is not None:
-            path = bundles / file
-            if path.exists():
-                entry["bytes"] = path.stat().st_size
-                entry["sha256"] = digest(path)
-            else:
-                # A target that did not build is absent rather than a row
-                # promising a file that is not there.
-                continue
-        binaries.setdefault(platform, {}).setdefault(arch, {})[kind] = entry
+        candidates = [stem.format(v=version)]
+        if "ClipCat" in stem:
+            candidates.append(stem.replace("ClipCat", "Concat").format(v=version))
+        for file in candidates:
+            entry = {
+                "file": file,
+                "url": asset_url(tag, file),
+            }
+            if bundles is not None:
+                path = bundles / file
+                if path.exists():
+                    entry["bytes"] = path.stat().st_size
+                    entry["sha256"] = digest(path)
+                else:
+                    continue
+            binaries.setdefault(platform, {}).setdefault(arch, {})[kind] = entry
+            break
 
     models = {}
     for model in data["model"]:

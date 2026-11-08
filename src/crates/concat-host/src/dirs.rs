@@ -21,16 +21,14 @@
 
 use std::path::{Path, PathBuf};
 
-/// The app identifier, which is also the folder name everywhere. Every
-/// release so far has used it; a phone treats a new one as another app,
-/// so it changes only with a domain of the project's own behind it.
-pub const IDENTIFIER: &str = "app.concat.editor";
+/// The app identifier, which is also the folder name everywhere.
+pub const IDENTIFIER: &str = "app.clipcat.editor";
 
-/// The identifier builds of `main` used between 2026-10-26 and
-/// 2026-11-04, never released. Those builds moved the folder to it and
-/// left a link at the old name, which [`IDENTIFIER`] now finds again;
-/// [`adopt`] moves the folder back where there is no link.
-const FORMER_IDENTIFIER: &str = "org.standalones.concat";
+/// The identifiers earlier builds used:
+/// - "app.concat.editor" (official Concat releases)
+/// - "org.standalones.concat" (interim experimental builds)
+pub const FORMER_IDENTIFIERS: &[&str] = &["app.concat.editor", "org.standalones.concat"];
+const FORMER_IDENTIFIER: &str = "app.concat.editor";
 
 /// The app's own directories on this machine.
 #[derive(Clone, Debug)]
@@ -171,20 +169,23 @@ fn adopt(folder: &Path) {
     if name != IDENTIFIER || folder.exists() {
         return;
     }
-    let former = parent.join(FORMER_IDENTIFIER);
-    if !former.is_dir() || former.is_symlink() {
-        return;
-    }
-    if let Err(error) = std::fs::rename(&former, folder) {
-        log::warn!(
-            "could not move {} to {}: {error}",
-            former.display(),
-            folder.display()
-        );
-        return;
-    }
-    if let Err(error) = link(folder, &former) {
-        log::warn!("could not leave a link at {}: {error}", former.display());
+    for former_name in FORMER_IDENTIFIERS {
+        let former = parent.join(former_name);
+        if !former.is_dir() || former.is_symlink() {
+            continue;
+        }
+        if let Err(error) = std::fs::rename(&former, folder) {
+            log::warn!(
+                "could not move {} to {}: {error}",
+                former.display(),
+                folder.display()
+            );
+            continue;
+        }
+        if let Err(error) = link(folder, &former) {
+            log::warn!("could not leave a link at {}: {error}", former.display());
+        }
+        break;
     }
 }
 

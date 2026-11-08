@@ -1,4 +1,4 @@
-# Launches the staged Windows bundle the way a person would, and fails if
+﻿# Launches the staged Windows bundle the way a person would, and fails if
 # it does not start. Nothing else in the build ever ran what it packaged,
 # and 0.2.6 shipped installers whose program would not open: a DLL that
 # was not in the folder, an old DirectML.dll found in System32 instead of
@@ -33,8 +33,11 @@ param(
 $ErrorActionPreference = "Stop"
 
 $bundle = (Resolve-Path $Bundle).Path
-$exe = Join-Path $bundle "concat.exe"
-if (-not (Test-Path $exe)) { throw "$exe is not there" }
+$exe = Join-Path $bundle "clipcat.exe"
+if (-not (Test-Path $exe)) {
+  $exe = Join-Path $bundle "concat.exe"
+}
+if (-not (Test-Path $exe)) { throw "Neither clipcat.exe nor concat.exe is in $bundle" }
 
 function Say($text) { Write-Host ""; Write-Host "== $text" }
 function Fail($text) {

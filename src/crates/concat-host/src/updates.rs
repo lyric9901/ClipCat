@@ -34,7 +34,7 @@ use crate::dirs::AppDirs;
 use crate::models;
 
 /// The repository the releases are read from.
-pub const REPO: &str = "jub0t/Concat";
+pub const REPO: &str = "lyric9901/ClipCat";
 
 /// The first release with a Version page: the earliest one a person can
 /// come back from, so the earliest one offered.
@@ -42,7 +42,7 @@ pub const FIRST_SWITCHABLE: Version = Version::new(0, 2, 5);
 
 /// GitHub's list of the repository's releases, newest first. A hundred
 /// covers years of releases at this pace.
-const RELEASES_URL: &str = "https://api.github.com/repos/jub0t/Concat/releases?per_page=100";
+const RELEASES_URL: &str = "https://api.github.com/repos/lyric9901/ClipCat/releases?per_page=100";
 
 /// What a download that was stopped says.
 pub const CANCELLED: &str = "the download was cancelled";
@@ -267,9 +267,10 @@ pub fn installed_as() -> Result<PackageKind, Fixed> {
             linux_kind(
                 std::env::var_os("APPIMAGE").is_some(),
                 std::env::var_os("FLATPAK_ID").is_some(),
-                Path::new("/var/lib/dpkg/info/concat.list").exists(),
-                pacman_has_concat(),
-                rpm_has_concat(),
+                Path::new("/var/lib/dpkg/info/clipcat.list").exists()
+                    || Path::new("/var/lib/dpkg/info/concat.list").exists(),
+                pacman_has_clipcat(),
+                rpm_has_clipcat(),
             )
         } else {
             Err(Fixed::Store)
@@ -325,27 +326,33 @@ fn linux_kind(
     }
 }
 
-/// Whether pacman's database lists the `concat` package: a folder named
-/// `concat-<version>-<release>` under its local store.
-fn pacman_has_concat() -> bool {
+/// Whether pacman's database lists the `clipcat` or `concat` package: a folder named
+/// `clipcat-<version>-<release>` or `concat-<version>-<release>` under its local store.
+fn pacman_has_clipcat() -> bool {
     std::fs::read_dir("/var/lib/pacman/local").is_ok_and(|entries| {
         entries.flatten().any(|entry| {
             let name = entry.file_name();
             let name = name.to_string_lossy();
-            name.strip_prefix("concat-")
-                .is_some_and(|rest| rest.starts_with(|c: char| c.is_ascii_digit()))
+            (name
+                .strip_prefix("clipcat-")
+                .or_else(|| name.strip_prefix("concat-")))
+            .is_some_and(|rest| rest.starts_with(|c: char| c.is_ascii_digit()))
         })
     })
 }
 
-/// Whether the RPM database lists `concat`. Asked of `rpm` itself, and only
+/// Whether the RPM database lists `clipcat` or `concat`. Asked of `rpm` itself, and only
 /// where there is a database to ask about.
-fn rpm_has_concat() -> bool {
+fn rpm_has_clipcat() -> bool {
     Path::new("/var/lib/rpm").exists()
-        && Command::new("rpm")
-            .args(["-q", "concat"])
+        && (Command::new("rpm")
+            .args(["-q", "clipcat"])
             .output()
             .is_ok_and(|output| output.status.success())
+            || Command::new("rpm")
+                .args(["-q", "concat"])
+                .output()
+                .is_ok_and(|output| output.status.success()))
 }
 
 /// One platform's package in a release: what to fetch and what it must
@@ -910,7 +917,7 @@ mod tests {
         }
         assert_eq!(
             manifest_url("v0.2.6"),
-            "https://github.com/jub0t/Concat/releases/download/v0.2.6/manifest.json"
+            "https://github.com/lyric9901/ClipCat/releases/download/v0.2.6/manifest.json"
         );
     }
 

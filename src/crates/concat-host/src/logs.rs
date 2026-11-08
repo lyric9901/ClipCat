@@ -42,7 +42,9 @@ pub const CAP: u64 = 16 * 1024 * 1024;
 
 /// The environment variable that overrides the level: `error`, `warn`,
 /// `info`, `debug` or `trace`. Info without one.
-pub const LEVEL_VARIABLE: &str = "CONCAT_LOG";
+pub const LEVEL_VARIABLE: &str = "CLIPCAT_LOG";
+/// Legacy environment variable for backward compatibility.
+pub const LEGACY_LEVEL_VARIABLE: &str = "CONCAT_LOG";
 
 /// The file this run is writing to, once [`open`] has been called.
 static CURRENT: OnceLock<PathBuf> = OnceLock::new();
@@ -140,7 +142,7 @@ fn begin(dirs: &AppDirs) -> Result<(PathBuf, std::fs::File), String> {
     std::fs::create_dir_all(&folder)
         .map_err(|error| format!("could not create {}: {error}", folder.display()))?;
     prune(&folder);
-    let path = folder.join(format!("concat-{}.log", stamp(now(), Stamp::File)));
+    let path = folder.join(format!("clipcat-{}.log", stamp(now(), Stamp::File)));
     let file = std::fs::OpenOptions::new()
         .create(true)
         .append(true)
@@ -164,7 +166,10 @@ fn prune(folder: &Path) {
         .filter(|path| {
             path.file_name()
                 .and_then(|name| name.to_str())
-                .is_some_and(|name| name.starts_with("concat-") && name.ends_with(".log"))
+                .is_some_and(|name| {
+                    (name.starts_with("clipcat-") || name.starts_with("concat-"))
+                        && name.ends_with(".log")
+                })
         })
         .collect();
     if ours.len() < KEEP {
@@ -183,10 +188,14 @@ fn level_from_environment() -> log::LevelFilter {
     environment_level().unwrap_or(log::LevelFilter::Info)
 }
 
-/// The level `CONCAT_LOG` names, when it names one: a run's own ceiling,
+/// The level `CLIPCAT_LOG` or `CONCAT_LOG` names, when it names one: a run's own ceiling,
 /// over the one the Settings sheet remembers.
 pub fn environment_level() -> Option<log::LevelFilter> {
-    level_named(&std::env::var(LEVEL_VARIABLE).unwrap_or_default())
+    std::env::var(LEVEL_VARIABLE)
+        .ok()
+        .or_else(|| std::env::var(LEGACY_LEVEL_VARIABLE).ok())
+        .as_deref()
+        .and_then(level_named)
 }
 
 /// A level by the name the environment and the preferences use: `error`,
@@ -236,9 +245,9 @@ fn firehose() -> bool {
     *FIREHOSE.get_or_init(|| environment_level().is_some())
 }
 
-/// Whether a target is one of Concat's own crates.
+/// Whether a target is one of our own crates.
 fn own(target: &str) -> bool {
-    target.starts_with("concat")
+    target.starts_with("clipcat") || target.starts_with("concat")
 }
 
 /// The open file and how much of its allowance is gone.

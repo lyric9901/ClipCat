@@ -1190,7 +1190,7 @@ pub fn render_on(
             ));
         }
         let sound_ext = audio_extension.as_deref().unwrap_or("wav");
-        let mixed = directory.join(format!(".{stem}.concat-audio.{sound_ext}"));
+        let mixed = directory.join(format!(".{stem}.clipcat-audio.{sound_ext}"));
 
         reporter.cancelled()?;
         reporter.emit(0, total_frames, "mixing audio");
@@ -1217,7 +1217,7 @@ pub fn render_on(
     // filesystem, then clean up whatever we made.
     let stem = output
         .file_stem()
-        .map_or_else(|| "concat".into(), |s| s.to_string_lossy());
+        .map_or_else(|| "clipcat".into(), |s| s.to_string_lossy());
     let directory = output.parent().unwrap_or(Path::new("."));
     // The folder the file goes in is made when it is not there. A phone's
     // Movies folder under the app's own files does not exist until the
@@ -1235,9 +1235,9 @@ pub fn render_on(
     // takes the AAC an MP4 does.
     let container = request.codec.container();
     let sound_container = if container == "webm" { "webm" } else { "m4a" };
-    let silent = directory.join(format!(".{stem}.concat-video.{container}"));
-    let mixed = directory.join(format!(".{stem}.concat-audio.{sound_container}"));
-    let muxed = directory.join(format!(".{stem}.concat-muxed.{container}"));
+    let silent = directory.join(format!(".{stem}.clipcat-video.{container}"));
+    let mixed = directory.join(format!(".{stem}.clipcat-audio.{sound_container}"));
+    let muxed = directory.join(format!(".{stem}.clipcat-muxed.{container}"));
 
     // The output path is touched once, by the rename at the end, whichever
     // way the file was made. The mux used to write it directly, and a mux
@@ -4540,7 +4540,10 @@ mod tests {
             let leftovers: Vec<_> = std::fs::read_dir(&dir)
                 .expect("lists")
                 .filter_map(|entry| entry.ok())
-                .filter(|entry| entry.file_name().to_string_lossy().contains(".concat-"))
+                .filter(|entry| {
+                    let name = entry.file_name().to_string_lossy().to_string();
+                    name.contains(".clipcat-") || name.contains(".concat-")
+                })
                 .collect();
             assert!(leftovers.is_empty(), "scratch files are removed");
         }

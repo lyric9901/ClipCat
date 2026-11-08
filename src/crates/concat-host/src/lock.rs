@@ -32,7 +32,9 @@ use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 /// The lock file's name in a project folder.
-pub const FILE: &str = "concat.lock";
+pub const FILE: &str = "clipcat.lock";
+/// The legacy lock file's name.
+pub const LEGACY_FILE: &str = "concat.lock";
 
 /// How many times an open races a holder that is letting go - the file
 /// removed between this process opening it and locking it - before it
@@ -69,8 +71,8 @@ impl std::fmt::Display for LockError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             LockError::Held(owner) => match owner.pid {
-                Some(pid) => write!(f, "open in another Concat (process {pid})"),
-                None => f.write_str("open in another Concat"),
+                Some(pid) => write!(f, "open in another ClipCat (process {pid})"),
+                None => f.write_str("open in another ClipCat"),
             },
             LockError::Io(why) => f.write_str(why),
         }
