@@ -132,6 +132,9 @@ impl Consolidation {
             color_space: self.video.color_space,
             hdr,
             effect_time_offset: start,
+            range_start: None,
+            range_duration: None,
+            audio_only: false,
             clips,
         }
     }

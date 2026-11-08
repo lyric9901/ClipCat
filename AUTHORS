@@ -1,0 +1,16 @@
+# Authors & Contributors
+
+## ClipCat Maintainers
+- lyric9901 <shabanabano.05r@gmail.com>
+
+## Upstream Concat Authors & Contributors
+ClipCat is an independent derivative work based on Concat. The following upstream authors contributed to the foundation and engine:
+- Jareer Abdullah <jareer@example.com>
+- Concat Contributors (see Git provenance and upstream history)
+
+## Third-Party Components & Libraries
+- Slint UI Toolkit (SixtyFPS GmbH)
+- FFmpeg Project Developers
+- whisper.cpp Developers (Georgi Gerganov and contributors)
+- ONNX Runtime Developers (Microsoft Corporation)
+- Hanken Grotesk Font (Hanken Design Co., Alfredo Marco Pradil)

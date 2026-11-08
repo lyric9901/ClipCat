@@ -133,7 +133,7 @@ fn flatten_timeline_internal(
     // Found once: asked of every clip, it is a walk of every clip.
     let lane = timeline.background_lane();
     let any_solo = timeline.tracks.iter().any(|t| t.solo);
-    let is_track_audible = |track: &concat_project::Track| {
+    let is_track_audible = |track: &concat_project::model::Track| {
         if any_solo {
             track.solo && !track.muted
         } else {
@@ -189,7 +189,7 @@ fn flatten_timeline_internal(
                 if clip.volume != 1.0 {
                     child.volume *= clip.volume;
                 }
-                if !track.visible || clip.hidden {
+                if !track.visible {
                     child.hidden = true;
                 }
                 if track_muted || clip.muted == Some(true) {

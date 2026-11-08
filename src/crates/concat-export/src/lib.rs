@@ -3127,6 +3127,9 @@ pub fn preview_plan(
         hdr: false,
         effect_time_offset: 0.0,
         canvas,
+        range_start: None,
+        range_duration: None,
+        audio_only: false,
         clips: Vec::new(),
     };
     PreviewPlan {
@@ -4289,6 +4292,9 @@ mod tests {
             color_space: ColorSpace::Sdr,
             hdr: false,
             effect_time_offset: 0.0,
+            range_start: None,
+            range_duration: None,
+            audio_only: false,
             clips: vec![footage],
         };
         assert!(!nested.exists());
@@ -4371,6 +4377,9 @@ mod tests {
             color_space: ColorSpace::Sdr,
             hdr: false,
             effect_time_offset: 0.0,
+            range_start: None,
+            range_duration: None,
+            audio_only: false,
             clips: vec![footage],
         };
         let cancel = AtomicBool::new(false);
@@ -4474,6 +4483,9 @@ mod tests {
             color_space: ColorSpace::Sdr,
             hdr: false,
             effect_time_offset: 0.0,
+            range_start: None,
+            range_duration: None,
+            audio_only: false,
             clips: vec![footage.clone(), sound.clone()],
         };
         let render = |request: &ExportRequest| {
@@ -4839,6 +4851,9 @@ mod tests {
             color_space: ColorSpace::Sdr,
             hdr: false,
             effect_time_offset: 0.0,
+            range_start: None,
+            range_duration: None,
+            audio_only: false,
             clips: vec![picture, sound],
         };
         let cancel = AtomicBool::new(false);
