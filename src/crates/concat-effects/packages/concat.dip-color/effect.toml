@@ -1,0 +1,35 @@
+format = 2
+
+[effect]
+id = "concat.dip-color"
+name = "Dip to Color"
+kind = "transition"
+category = "Basic"
+order = 3
+aliases = ["dip-color"]
+description = "The outgoing shot fades into a solid color by the middle of the cut, and the incoming one fades up from it."
+
+[[param]]
+key = "red"
+label = "Red"
+default = 0.0
+min = 0.0
+max = 1.0
+
+[[param]]
+key = "green"
+label = "Green"
+default = 0.0
+min = 0.0
+max = 1.0
+
+[[param]]
+key = "blue"
+label = "Blue"
+default = 0.0
+min = 0.0
+max = 1.0
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

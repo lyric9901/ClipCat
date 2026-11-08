@@ -1,0 +1,28 @@
+format = 2
+
+[effect]
+id = "concat.luma-wipe"
+name = "Luma Wipe"
+kind = "transition"
+category = "Wipe"
+order = 4
+aliases = ["luma-wipe"]
+description = "Reveals the incoming clip based on luminance threshold."
+
+[[param]]
+key = "softness"
+label = "Softness"
+default = 0.1
+min = 0.0
+max = 1.0
+
+[[param]]
+key = "invert"
+label = "Invert"
+default = 0.0
+min = 0.0
+max = 1.0
+
+[transition]
+entry = "effect.wgsl"
+fallback = "linear-wipe"

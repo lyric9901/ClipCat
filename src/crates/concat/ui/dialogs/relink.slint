@@ -1,0 +1,129 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Jareer Abdullah and Concat contributors
+
+import { I18n } from "../i18n.slint";
+import { Theme } from "../theme/theme.slint";
+import { Glyph } from "../icons.slint";
+import { Button, DialogSection, Modal } from "../primitives/modal.slint";
+import { IconButton } from "../primitives/panel.slint";
+
+export struct MissingMediaItem {
+    id: string,
+    name: string,
+    path: string,
+    /// how many clips use it, on every timeline: what Remove takes too
+    clips: int,
+}
+
+export struct RelinkData {
+    open: bool,
+    items: [MissingMediaItem],
+}
+
+export component RelinkDialog inherits Modal {
+    in property <RelinkData> data;
+
+    callback relink-all();
+    /// Take this file out of the project, with its clips, for good.
+    callback remove(id: string);
+    callback dismiss();
+
+    open: root.data.open;
+    title: I18n.t("relink.missingMedia");
+    glyph: Glyph.info;
+    surface-width: 600px;
+
+    VerticalLayout {
+        DialogSection {
+            first: true;
+            title: I18n.t1("relink.mediaFilesNotFound", "" + data.items.length);
+
+            Text {
+                text: I18n.t("relink.followingMediaFilesCould");
+                color: Theme.fg;
+                wrap: word-wrap;
+            }
+
+            Flickable {
+                height: 200px;
+                content-height: items-layout.preferred-height;
+
+                items-layout := VerticalLayout {
+                    spacing: 4px;
+                    
+                    for item in root.data.items : Rectangle {
+                        height: 40px;
+                        background: Theme.field;
+                        border-radius: 4px;
+
+                        HorizontalLayout {
+                            padding-left: 8px;
+                            padding-right: 4px;
+                            spacing: 8px;
+
+                            VerticalLayout {
+                                alignment: center;
+                                horizontal-stretch: 1;
+
+                                HorizontalLayout {
+                                    spacing: 8px;
+                                    Text {
+                                        text: item.name;
+                                        color: Theme.fg;
+                                        font-size: Theme.fs;
+                                        overflow: elide;
+                                        horizontal-stretch: 1;
+                                    }
+                                    if item.clips > 0: Text {
+                                        text: I18n.t1("relink.usedByClips", "" + item.clips);
+                                        color: Theme.fg-dim;
+                                        font-size: Theme.fs-sm;
+                                        horizontal-stretch: 0;
+                                    }
+                                }
+
+                                Text {
+                                    text: item.path;
+                                    color: Theme.fg-dim;
+                                    font-size: Theme.fs-sm;
+                                    font-family: Theme.font-technical;
+                                    overflow: elide;
+                                }
+                            }
+
+                            // Gone for good, so it is never asked after
+                            // again: the file and the clips made from it.
+                            // Undo brings both back.
+                            VerticalLayout {
+                                alignment: center;
+                                IconButton {
+                                    glyph: Glyph.trash;
+                                    danger: true;
+                                    label: I18n.t("relink.removeFromProject");
+                                    clicked => { root.remove(item.id); }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        HorizontalLayout {
+            alignment: end;
+            spacing: 8px;
+
+            Button {
+                primary: false;
+                label: I18n.t("relink.dismiss");
+                clicked => { root.dismiss(); }
+            }
+
+            Button {
+                primary: true;
+                label: I18n.t("relink.relinkAll");
+                clicked => { root.relink-all(); }
+            }
+        }
+    }
+}

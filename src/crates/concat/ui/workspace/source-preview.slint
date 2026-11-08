@@ -1,0 +1,41 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Jareer Abdullah
+
+/// The library file lent to the monitor and the speakers, published by
+/// Rust (see concat's source.rs): its card shows how far it has played,
+/// the monitor names it, and its transport runs through it.
+export global SourcePreview {
+    in property <bool> open;
+    in property <string> name;
+    /// The card's row, or -1.
+    in property <int> row: -1;
+    /// The Audio page's card playing, or empty for a file in the bin.
+    in property <string> card;
+    in property <float> time;
+    in property <float> duration;
+    in property <float> progress;
+    in property <bool> playing;
+    /// Source in and out mark points (negative if unset)
+    in property <float> mark-in: -1.0;
+    in property <float> mark-out: -1.0;
+    /// Metadata strings
+    in property <string> resolution: "";
+    in property <string> frame-rate: "";
+    in property <string> codec: "";
+    /// Target patching
+    in-out property <bool> patch-video: true;
+    in-out property <bool> patch-audio: true;
+    /// The monitor's chip was closed: the timeline has it back.
+    callback closed();
+    /// The monitor's timecode moved through the source.
+    callback seek(seconds: float);
+    /// 3-point marking callbacks
+    callback set-mark-in();
+    callback set-mark-out();
+    callback clear-marks();
+    /// 3-point edit actions
+    callback insert-edit();
+    callback overwrite-edit();
+    /// Stepping
+    callback step-frame(forward: bool);
+}

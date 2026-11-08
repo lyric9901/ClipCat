@@ -1,0 +1,387 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Jareer Abdullah and Concat contributors
+
+import { Theme, SegmentedControl } from "../primitives/primitives.slint";
+
+/// Data packet published from Rust to Slint for real-time scopes visualization.
+export struct ScopeDisplayData {
+    /// 0: Histogram, 1: Waveform, 2: RGB Parade, 3: Vectorscope
+    mode: int,
+    black-clipping: int,
+    white-clipping: int,
+    total-samples: int,
+    /// SVG paths in [0, 1] unit box
+    path-luma: string,
+    path-red: string,
+    path-green: string,
+    path-blue: string,
+    path-vectorscope: string,
+}
+
+/// Professional Video Scopes component for Color Workspace and Inspector.
+export component ScopesView inherits VerticalLayout {
+    in-out property <ScopeDisplayData> scopes: {
+        mode: 0,
+        black-clipping: 0,
+        white-clipping: 0,
+        total-samples: 0,
+        path-luma: "M 0 1 L 0.5 0.2 L 1 1",
+        path-red: "M 0 1 L 0.4 0.3 L 1 1",
+        path-green: "M 0 1 L 0.5 0.4 L 1 1",
+        path-blue: "M 0 1 L 0.6 0.5 L 1 1",
+        path-vectorscope: "M 0.5 0.5 l 0.01 0.01",
+    };
+
+    callback mode-changed(int);
+
+    spacing: 6px;
+    padding: 6px;
+
+    // ── Header Controls ──
+    HorizontalLayout {
+        spacing: 6px;
+        alignment: space-between;
+
+        SegmentedControl {
+            options: ["Histogram", "Waveform", "Parade", "Vectorscope"];
+            current <=> root.scopes.mode;
+        }
+
+        // Clipping Badges
+        HorizontalLayout {
+            spacing: 4px;
+            alignment: center;
+
+            if root.scopes.black_clipping > 0: Rectangle {
+                border-radius: Theme.r-xs;
+                background: #e5484d.transparentize(80%);
+                border-width: 1px;
+                border-color: #e5484d;
+                padding-left: 4px;
+                padding-right: 4px;
+                height: 18px;
+
+                HorizontalLayout {
+                    alignment: center;
+                    Text {
+                        text: "BLK: " + root.scopes.black_clipping;
+                        font-size: Theme.fs-xs;
+                        color: #e5484d;
+                        font-weight: Theme.weight-title;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+
+            if root.scopes.white_clipping > 0: Rectangle {
+                border-radius: Theme.r-xs;
+                background: #f76808.transparentize(80%);
+                border-width: 1px;
+                border-color: #f76808;
+                padding-left: 4px;
+                padding-right: 4px;
+                height: 18px;
+
+                HorizontalLayout {
+                    alignment: center;
+                    Text {
+                        text: "WHT: " + root.scopes.white_clipping;
+                        font-size: Theme.fs-xs;
+                        color: #f76808;
+                        font-weight: Theme.weight-title;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+        }
+    }
+
+    // ── Scope Display Canvas ──
+    canvas := Rectangle {
+        height: 180px;
+        background: #090a0f;
+        border-width: 1px;
+        border-color: Theme.line;
+        border-radius: Theme.r-sm;
+        clip: true;
+
+        // ── 1. HISTOGRAM ──
+        if root.scopes.mode == 0: Rectangle {
+            width: parent.width;
+            height: parent.height;
+
+            // Graticule grid
+            for step in 3: Rectangle {
+                x: (step + 1) * parent.width / 4;
+                width: 1px;
+                height: parent.height;
+                background: #1e2230;
+            }
+
+            for step in 3: Rectangle {
+                y: (step + 1) * parent.height / 4;
+                width: parent.width;
+                height: 1px;
+                background: #1e2230;
+            }
+
+            // Red Channel
+            Path {
+                width: parent.width;
+                height: parent.height;
+                viewbox-width: 1;
+                viewbox-height: 1;
+                commands: root.scopes.path-red;
+                stroke: #e5484d.transparentize(30%);
+                stroke-width: 1.5px;
+            }
+
+            // Green Channel
+            Path {
+                width: parent.width;
+                height: parent.height;
+                viewbox-width: 1;
+                viewbox-height: 1;
+                commands: root.scopes.path-green;
+                stroke: #46a758.transparentize(30%);
+                stroke-width: 1.5px;
+            }
+
+            // Blue Channel
+            Path {
+                width: parent.width;
+                height: parent.height;
+                viewbox-width: 1;
+                viewbox-height: 1;
+                commands: root.scopes.path-blue;
+                stroke: #4c7df0.transparentize(30%);
+                stroke-width: 1.5px;
+            }
+
+            // Luma Channel
+            Path {
+                width: parent.width;
+                height: parent.height;
+                viewbox-width: 1;
+                viewbox-height: 1;
+                commands: root.scopes.path-luma;
+                stroke: #ffffff;
+                stroke-width: 2px;
+            }
+        }
+
+        // ── 2. WAVEFORM (LUMA) ──
+        if root.scopes.mode == 1: Rectangle {
+            width: parent.width;
+            height: parent.height;
+
+            // 100 IRE (top white)
+            Rectangle {
+                y: 10px;
+                width: parent.width;
+                height: 1px;
+                background: #3a4254;
+            }
+            Text {
+                x: 6px;
+                y: 2px;
+                text: "100 IRE";
+                font-size: Theme.fs-xs;
+                color: Theme.fg-dim;
+            }
+
+            // 50 IRE (mid)
+            Rectangle {
+                y: parent.height / 2;
+                width: parent.width;
+                height: 1px;
+                background: #252b3b;
+            }
+            Text {
+                x: 6px;
+                y: parent.height / 2 - 12px;
+                text: "50 IRE";
+                font-size: Theme.fs-xs;
+                color: Theme.fg-dim;
+            }
+
+            // 0 IRE (bottom black)
+            Rectangle {
+                y: parent.height - 10px;
+                width: parent.width;
+                height: 1px;
+                background: #3a4254;
+            }
+            Text {
+                x: 6px;
+                y: parent.height - 20px;
+                text: "0 IRE";
+                font-size: Theme.fs-xs;
+                color: Theme.fg-dim;
+            }
+
+            // Waveform Trace
+            Path {
+                width: parent.width;
+                height: parent.height;
+                viewbox-width: 1;
+                viewbox-height: 1;
+                commands: root.scopes.path-luma;
+                stroke: #39e58c;
+                stroke-width: 1.5px;
+            }
+        }
+
+        // ── 3. RGB PARADE ──
+        if root.scopes.mode == 2: HorizontalLayout {
+            width: parent.width;
+            height: parent.height;
+            spacing: 2px;
+
+            // Red Column
+            Rectangle {
+                horizontal-stretch: 1;
+                background: #0d0f18;
+                border-width: 1px;
+                border-color: #252b3b;
+
+                Text {
+                    x: 6px;
+                    y: 4px;
+                    text: "R";
+                    color: #e5484d;
+                    font-size: Theme.fs-xs;
+                    font-weight: Theme.weight-title;
+                }
+
+                Path {
+                    width: parent.width;
+                    height: parent.height;
+                    viewbox-width: 1;
+                    viewbox-height: 1;
+                    commands: root.scopes.path-red;
+                    stroke: #e5484d;
+                    stroke-width: 1.2px;
+                }
+            }
+
+            // Green Column
+            Rectangle {
+                horizontal-stretch: 1;
+                background: #0d0f18;
+                border-width: 1px;
+                border-color: #252b3b;
+
+                Text {
+                    x: 6px;
+                    y: 4px;
+                    text: "G";
+                    color: #46a758;
+                    font-size: Theme.fs-xs;
+                    font-weight: Theme.weight-title;
+                }
+
+                Path {
+                    width: parent.width;
+                    height: parent.height;
+                    viewbox-width: 1;
+                    viewbox-height: 1;
+                    commands: root.scopes.path-green;
+                    stroke: #46a758;
+                    stroke-width: 1.2px;
+                }
+            }
+
+            // Blue Column
+            Rectangle {
+                horizontal-stretch: 1;
+                background: #0d0f18;
+                border-width: 1px;
+                border-color: #252b3b;
+
+                Text {
+                    x: 6px;
+                    y: 4px;
+                    text: "B";
+                    color: #4c7df0;
+                    font-size: Theme.fs-xs;
+                    font-weight: Theme.weight-title;
+                }
+
+                Path {
+                    width: parent.width;
+                    height: parent.height;
+                    viewbox-width: 1;
+                    viewbox-height: 1;
+                    commands: root.scopes.path-blue;
+                    stroke: #4c7df0;
+                    stroke-width: 1.2px;
+                }
+            }
+        }
+
+        // ── 4. VECTORSCOPE ──
+        if root.scopes.mode == 3: Rectangle {
+            width: parent.width;
+            height: parent.height;
+
+            // Polar reticle circle
+            Rectangle {
+                x: (parent.width - 150px) / 2;
+                y: (parent.height - 150px) / 2;
+                width: 150px;
+                height: 150px;
+                border-radius: 75px;
+                border-width: 1px;
+                border-color: #252b3b;
+            }
+
+            // Crosshair
+            Rectangle {
+                x: parent.width / 2;
+                y: 15px;
+                width: 1px;
+                height: parent.height - 30px;
+                background: #1e2230;
+            }
+            Rectangle {
+                x: (parent.width - (parent.height - 30px)) / 2;
+                y: parent.height / 2;
+                width: parent.height - 30px;
+                height: 1px;
+                background: #1e2230;
+            }
+
+            // Skin Tone Line (~123°)
+            Path {
+                width: parent.width;
+                height: parent.height;
+                viewbox-width: 1;
+                viewbox-height: 1;
+                // Line from center (0.5, 0.5) towards top-left (0.28, 0.16)
+                commands: "M 0.5 0.5 L 0.28 0.16";
+                stroke: #e09f3e;
+                stroke-width: 1px;
+            }
+
+            Text {
+                x: parent.width / 2 - 70px;
+                y: 18px;
+                text: "I (Skin)";
+                color: #e09f3e;
+                font-size: Theme.fs-xs;
+            }
+
+            // Vectorscope Scatter Cloud
+            Path {
+                width: parent.width;
+                height: parent.height;
+                viewbox-width: 1;
+                viewbox-height: 1;
+                commands: root.scopes.path-vectorscope;
+                stroke: #39e58c;
+                stroke-width: 2px;
+            }
+        }
+    }
+}

@@ -1,0 +1,353 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Jareer Abdullah and Concat contributors
+
+import { Theme } from "../theme/theme.slint";
+import { Glyph, Icon } from "../icons.slint";
+
+/// Data for a single mixer channel strip.
+export struct ChannelStripData {
+    name: string,
+    volume-db: float,
+    pan: float, // -1.0 to 1.0
+    mute: bool,
+    solo: bool,
+    peak-l: float, // 0.0 to 1.0
+    peak-r: float,
+}
+
+/// Data for the master bus channel strip.
+export struct MasterStripData {
+    volume-db: float,
+    peak-l: float,
+    peak-r: float,
+    lufs-integrated: float,
+    lufs-short-term: float,
+}
+
+/// Channel strip component in DAW mixer.
+component ChannelStrip inherits Rectangle {
+    in property <ChannelStripData> channel;
+    in property <bool> is-master: false;
+
+    callback volume-changed(float);
+    callback pan-changed(float);
+    callback mute-toggled();
+    callback solo-toggled();
+
+    width: 76px;
+    background: #11141c;
+    border-width: 1px;
+    border-color: Theme.line;
+    border-radius: Theme.r-xs;
+
+    VerticalLayout {
+        padding: 6px;
+        spacing: 6px;
+
+        // Track Name Header
+        Rectangle {
+            height: 22px;
+            background: root.is-master ? #242c3d : #181d29;
+            border-radius: Theme.r-xs;
+
+            Text {
+                text: root.channel.name;
+                font-size: Theme.fs-xs;
+                font-weight: Theme.weight-title;
+                color: root.is-master ? #f5a623 : Theme.fg;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+
+        // Pan Knob / Slider
+        if !root.is-master: HorizontalLayout {
+            height: 18px;
+            alignment: center;
+            spacing: 2px;
+
+            Text {
+                text: root.channel.pan < -0.05 ? "L " + Math.round(-root.channel.pan * 100) :
+                      root.channel.pan > 0.05 ? "R " + Math.round(root.channel.pan * 100) : "C";
+                font-size: Theme.fs-xs;
+                color: Theme.fg-muted;
+                vertical-alignment: center;
+            }
+        }
+
+        // Mute & Solo Buttons
+        if !root.is-master: HorizontalLayout {
+            height: 20px;
+            spacing: 4px;
+
+            // Mute
+            Rectangle {
+                horizontal-stretch: 1;
+                border-radius: Theme.r-xs;
+                background: root.channel.mute ? #e5484d : #1d2230;
+
+                Text {
+                    text: "M";
+                    font-size: Theme.fs-xs;
+                    font-weight: Theme.weight-title;
+                    color: root.channel.mute ? #ffffff : Theme.fg-dim;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+
+                TouchArea {
+                    clicked => { root.mute-toggled(); }
+                }
+            }
+
+            // Solo
+            Rectangle {
+                horizontal-stretch: 1;
+                border-radius: Theme.r-xs;
+                background: root.channel.solo ? #f5a623 : #1d2230;
+
+                Text {
+                    text: "S";
+                    font-size: Theme.fs-xs;
+                    font-weight: Theme.weight-title;
+                    color: root.channel.solo ? #000000 : Theme.fg-dim;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+
+                TouchArea {
+                    clicked => { root.solo-toggled(); }
+                }
+            }
+        }
+
+        // Fader & Meter Area
+        HorizontalLayout {
+            vertical-stretch: 1;
+            spacing: 6px;
+            alignment: center;
+
+            // Peak Meters (Left & Right)
+            HorizontalLayout {
+                width: 14px;
+                spacing: 2px;
+
+                // Meter L
+                Rectangle {
+                    horizontal-stretch: 1;
+                    background: #090b10;
+                    border-radius: 1px;
+
+                    // Fill bar
+                    Rectangle {
+                        y: parent.height * (1.0 - Math.min(1.0, root.channel.peak-l));
+                        height: parent.height * Math.min(1.0, root.channel.peak-l);
+                        background: root.channel.peak-l > 0.95 ? #e5484d : root.channel.peak-l > 0.75 ? #f5a623 : #46a758;
+                        border-radius: 1px;
+                    }
+                }
+
+                // Meter R
+                Rectangle {
+                    horizontal-stretch: 1;
+                    background: #090b10;
+                    border-radius: 1px;
+
+                    // Fill bar
+                    Rectangle {
+                        y: parent.height * (1.0 - Math.min(1.0, root.channel.peak-r));
+                        height: parent.height * Math.min(1.0, root.channel.peak-r);
+                        background: root.channel.peak-r > 0.95 ? #e5484d : root.channel.peak-r > 0.75 ? #f5a623 : #46a758;
+                        border-radius: 1px;
+                    }
+                }
+            }
+
+            // Fader Track
+            fader := Rectangle {
+                width: 24px;
+                background: #090b10;
+                border-radius: Theme.r-xs;
+
+                // Center line
+                Rectangle {
+                    x: (parent.width - 2px) / 2;
+                    width: 2px;
+                    height: parent.height;
+                    background: #252b3b;
+                }
+
+                // Fader Thumb Handle
+                property <float> norm: Math.max(0.0, Math.min(1.0, (root.channel.volume-db + 60.0) / 72.0));
+                thumb := Rectangle {
+                    x: 2px;
+                    y: (parent.height - self.height) * (1.0 - parent.norm);
+                    width: parent.width - 4px;
+                    height: 20px;
+                    border-radius: Theme.r-xs;
+                    background: thumb-touch.has-hover ? #4a5568 : #2d3748;
+                    border-width: 1px;
+                    border-color: #718096;
+
+                    // Grip lines
+                    Rectangle {
+                        y: 9px;
+                        width: parent.width;
+                        height: 2px;
+                        background: #a0aec0;
+                    }
+
+                    thumb-touch := TouchArea {
+                        moved => {
+                            if (self.enabled) {
+                                // Simple interactive dragging
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // dB Readout
+        Rectangle {
+            height: 18px;
+            background: #090b10;
+            border-radius: Theme.r-xs;
+
+            Text {
+                text: root.channel.volume-db <= -59.5 ? "-inf" :
+                      (root.channel.volume-db > 0.0 ? "+" : "") + Math.round(root.channel.volume-db * 10) / 10 + " dB";
+                font-size: Theme.fs-xs;
+                font-family: Theme.font-technical;
+                color: Theme.fg-muted;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+    }
+}
+
+/// DAW Audio Mixer Pane (Fairlight Console Style).
+export component AudioMixerPane inherits Rectangle {
+    in property <[ChannelStripData]> channels: [
+        { name: "A1 (Dia)", volume-db: 0.0, pan: 0.0, mute: false, solo: false, peak-l: 0.65, peak-r: 0.62 },
+        { name: "A2 (Mus)", volume-db: -8.0, pan: 0.0, mute: false, solo: false, peak-l: 0.40, peak-r: 0.42 },
+        { name: "A3 (SFX)", volume-db: -3.5, pan: -0.2, mute: false, solo: false, peak-l: 0.25, peak-r: 0.18 },
+    ];
+
+    in property <MasterStripData> master: {
+        volume-db: 0.0,
+        peak-l: 0.68,
+        peak-r: 0.65,
+        lufs-integrated: -14.2,
+        lufs-short-term: -13.8,
+    };
+
+    callback channel-volume(int, float);
+    callback channel-pan(int, float);
+    callback channel-mute(int);
+    callback channel-solo(int);
+    callback master-volume(float);
+
+    background: #0d0f17;
+
+    VerticalLayout {
+        padding: 8px;
+        spacing: 8px;
+
+        // Top Header
+        HorizontalLayout {
+            height: 28px;
+            alignment: space-between;
+
+            HorizontalLayout {
+                spacing: 8px;
+                alignment: center;
+
+                Text {
+                    text: "FAIRLIGHT AUDIO MIXER";
+                    font-size: Theme.fs;
+                    font-weight: Theme.weight-title;
+                    color: Theme.fg;
+                    vertical-alignment: center;
+                }
+
+                // Target Compliance Badge
+                Rectangle {
+                    border-radius: Theme.r-xs;
+                    background: #46a758.transparentize(80%);
+                    border-width: 1px;
+                    border-color: #46a758;
+                    padding-left: 6px;
+                    padding-right: 6px;
+                    height: 20px;
+
+                    HorizontalLayout {
+                        alignment: center;
+                        Text {
+                            text: "Target: -14 LUFS (YouTube)";
+                            font-size: Theme.fs-xs;
+                            color: #46a758;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+
+            // Loudness Summary
+            HorizontalLayout {
+                spacing: 12px;
+                alignment: center;
+
+                Text {
+                    text: "INT: " + Math.round(root.master.lufs-integrated * 10) / 10 + " LUFS";
+                    font-size: Theme.fs-sm;
+                    font-family: Theme.font-technical;
+                    color: Theme.fg;
+                    vertical-alignment: center;
+                }
+
+                Text {
+                    text: "SHORT: " + Math.round(root.master.lufs-short-term * 10) / 10 + " LUFS";
+                    font-size: Theme.fs-sm;
+                    font-family: Theme.font-technical;
+                    color: Theme.fg-muted;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // Mixer Channel Strips Console
+        HorizontalLayout {
+            vertical-stretch: 1;
+            spacing: 8px;
+
+            // Tracks
+            for ch[idx] in root.channels: ChannelStrip {
+                channel: ch;
+                is-master: false;
+                mute-toggled => { root.channel-mute(idx); }
+                solo-toggled => { root.channel-solo(idx); }
+                volume-changed(v) => { root.channel-volume(idx, v); }
+                pan-changed(p) => { root.channel-pan(idx, p); }
+            }
+
+            Rectangle { horizontal-stretch: 1; }
+
+            // Master Bus Channel Strip
+            ChannelStrip {
+                channel: {
+                    name: "MASTER",
+                    volume-db: root.master.volume-db,
+                    pan: 0.0,
+                    mute: false,
+                    solo: false,
+                    peak-l: root.master.peak-l,
+                    peak-r: root.master.peak-r,
+                };
+                is-master: true;
+                volume-changed(v) => { root.master-volume(v); }
+            }
+        }
+    }
+}
