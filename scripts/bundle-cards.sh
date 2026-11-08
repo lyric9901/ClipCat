@@ -12,7 +12,7 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
-out="$root/src/crates/concat/cards"
+out="$root/src/crates/clipcat/cards"
 case "$(uname -s)" in
   Darwin) default="$HOME/Library/Application Support/app.concat.editor/cards" ;;
   Linux) default="${XDG_DATA_HOME:-$HOME/.local/share}/app.concat.editor/cards" ;;
@@ -29,7 +29,7 @@ for card in "$from"/*-????????????????.jpg; do
   name="$(basename "$card")"
   id="${name%-*}"
   # Only the built-ins: a user's own package has no folder here.
-  [ -d "$root/src/crates/concat-effects/packages/$id" ] || continue
+  [ -d "$root/src/crates/clipcat-effects/packages/$id" ] || continue
   cp "$card" "$out/$id.jpg"
   count=$((count + 1))
 done

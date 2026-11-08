@@ -497,7 +497,7 @@ jobs:
         working-directory: src
         run: |
           set -o pipefail
-          cargo build --profile app -p concat --target ${{ matrix.target }} 2>&1 | tee build.log
+          cargo build --profile app -p clipcat --target ${{ matrix.target }} 2>&1 | tee build.log
 
       - name: Build log to the summary (failure only)
         if: failure()
@@ -1106,7 +1106,7 @@ jobs:
           }
           # The installer, from that folder: Inno Setup, which the x64
           # image carries and the ARM image is given. See
-          # assets/windows/concat.iss.
+          # assets/windows/clipcat.iss.
           $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
           if (-not (Test-Path $iscc)) {
             Write-Host "Installing Inno Setup"
@@ -1114,17 +1114,17 @@ jobs:
           }
           if (-not (Test-Path $iscc)) { throw "Inno Setup is not at $iscc" }
           & $iscc "/DVersion=$env:VERSION" "/DArch=${{ matrix.inno }}" "/DSuffix=${{ matrix.arch }}" `
-            "/DStage=$PWD\stage\$name" "/DOut=$PWD\stage" assets\windows\concat.iss
+            "/DStage=$PWD\stage\$name" "/DOut=$PWD\stage" assets\windows\clipcat.iss
           if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed with $LASTEXITCODE" }
           if (-not (Test-Path "stage\$name-setup.exe")) { throw "stage\$name-setup.exe is not there" }
           Sign "stage\$name-setup.exe"
           # And the .msi, with WiX, for the machines an administrator
-          # deploys to. See assets/windows/concat.wxs.
+          # deploys to. See assets/windows/clipcat.wxs.
           dotnet tool install --global wix --version $env:WIX_VERSION | Out-Null
           # No .wixpdb: everything in stage/ is published, and a debug
           # database for the installer is nothing a release should carry.
           wix build -arch ${{ matrix.wix }} -pdbtype none "-d" "Version=$env:VERSION" "-d" "Root=$PWD" "-d" "Stage=$PWD\stage\$name" `
-            -o "stage\$name.msi" assets\windows\concat.wxs
+            -o "stage\$name.msi" assets\windows\clipcat.wxs
           if ($LASTEXITCODE -ne 0) { throw "WiX failed with $LASTEXITCODE" }
           if (-not (Test-Path "stage\$name.msi")) { throw "stage\$name.msi is not there" }
           Sign "stage\$name.msi"

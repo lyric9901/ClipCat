@@ -26,7 +26,7 @@ en.json is the inventory a translator starts from; see TRANSLATING.md.
 
 The app speaks the languages the READMEs are written in, one for one:
 every `locales/<code>.json` is compiled in through `BUILT_IN` in
-src/crates/concat/src/i18n.rs and has a `docs/README.<code>.md` (English's
+src/crates/clipcat/src/i18n.rs and has a `docs/README.<code>.md` (English's
 is README.md), and every README has its locale. `--check` fails on a
 language one side has and the other does not.
 """
@@ -47,7 +47,7 @@ for _stream in (sys.stdout, sys.stderr):
         pass
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-CRATE = ROOT / "src" / "crates" / "concat"
+CRATE = ROOT / "src" / "crates" / "clipcat"
 LOCALES = CRATE / "locales"
 I18N = CRATE / "src" / "i18n.rs"
 DOCS = ROOT / "docs"
@@ -154,7 +154,7 @@ def parity() -> list[str]:
     if (ROOT / "README.md").exists():
         readmes.add("en")
     out = []
-    out += [f"locales/{code}.json is not in BUILT_IN in src/crates/concat/src/i18n.rs"
+    out += [f"locales/{code}.json is not in BUILT_IN in src/crates/clipcat/src/i18n.rs"
             for code in sorted(files - built_in)]
     out += [f"BUILT_IN lists {code}, which has no locales/{code}.json"
             for code in sorted(built_in - files)]

@@ -1090,6 +1090,276 @@ dependencies = [
 ]
 
 [[package]]
+name = "clipcat"
+version = "0.2.9"
+dependencies = [
+ "block2 0.6.2",
+ "clipcat-api",
+ "clipcat-core",
+ "clipcat-effects",
+ "clipcat-export",
+ "clipcat-host",
+ "clipcat-mcp",
+ "clipcat-media",
+ "clipcat-project",
+ "clipcat-render",
+ "clipcat-server",
+ "clipcat-speech",
+ "clipcat-text",
+ "clipcat-vision",
+ "dirs",
+ "image",
+ "libc",
+ "log",
+ "objc2 0.6.4",
+ "objc2-foundation 0.3.2",
+ "opener",
+ "pollster",
+ "rfd",
+ "serde",
+ "serde_json",
+ "slint",
+ "slint-build",
+ "toml",
+ "wayland-backend",
+ "wayland-client",
+ "wgpu",
+ "winresource",
+]
+
+[[package]]
+name = "clipcat-android"
+version = "0.2.9"
+dependencies = [
+ "android-build",
+ "android_logger",
+ "clipcat",
+ "jni 0.22.4",
+ "libc",
+ "log",
+ "slint",
+]
+
+[[package]]
+name = "clipcat-api"
+version = "0.2.9"
+dependencies = [
+ "base64 0.22.1",
+ "clipcat-core",
+ "clipcat-effects",
+ "clipcat-export",
+ "clipcat-host",
+ "clipcat-project",
+ "png 0.17.16",
+ "schemars",
+ "serde",
+ "serde_json",
+ "tempfile",
+]
+
+[[package]]
+name = "clipcat-cli"
+version = "0.2.9"
+dependencies = [
+ "clap",
+ "clipcat-api",
+ "clipcat-core",
+ "clipcat-effects",
+ "clipcat-host",
+ "clipcat-media",
+ "clipcat-render",
+ "clipcat-server",
+ "serde_json",
+]
+
+[[package]]
+name = "clipcat-core"
+version = "0.2.9"
+
+[[package]]
+name = "clipcat-effects"
+version = "0.2.9"
+dependencies = [
+ "clipcat-core",
+ "clipcat-project",
+ "naga",
+ "serde",
+ "thiserror 2.0.20",
+ "toml",
+]
+
+[[package]]
+name = "clipcat-export"
+version = "0.2.9"
+dependencies = [
+ "clipcat-core",
+ "clipcat-effects",
+ "clipcat-media",
+ "clipcat-project",
+ "clipcat-render",
+ "clipcat-vision",
+ "log",
+ "serde",
+]
+
+[[package]]
+name = "clipcat-host"
+version = "0.2.9"
+dependencies = [
+ "clipcat-core",
+ "clipcat-effects",
+ "clipcat-export",
+ "clipcat-media",
+ "clipcat-project",
+ "clipcat-render",
+ "clipcat-text",
+ "clipcat-vision",
+ "cpal",
+ "libc",
+ "log",
+ "memmap2",
+ "png 0.17.16",
+ "rustls",
+ "rustls-native-certs",
+ "schemars",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "ureq 2.12.1",
+ "webpki-roots 0.26.11",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "clipcat-mcp"
+version = "0.2.9"
+dependencies = [
+ "clipcat-api",
+ "clipcat-server",
+ "serde_json",
+ "tempfile",
+]
+
+[[package]]
+name = "clipcat-media"
+version = "0.2.9"
+dependencies = [
+ "clipcat-core",
+ "ffmpeg-the-third",
+ "libc",
+ "log",
+ "ndk 0.9.0",
+ "resvg",
+ "thiserror 2.0.20",
+]
+
+[[package]]
+name = "clipcat-mobile"
+version = "0.2.9"
+dependencies = [
+ "android_logger",
+ "clipcat-core",
+ "clipcat-export",
+ "clipcat-host",
+ "clipcat-media",
+ "clipcat-project",
+ "jni-sys 0.3.1",
+ "log",
+ "ndk 0.9.0",
+ "ndk-context",
+ "ndk-sys 0.6.0+11769913",
+ "pollster",
+ "raw-window-handle",
+ "thiserror 2.0.20",
+ "uniffi",
+ "wgpu",
+]
+
+[[package]]
+name = "clipcat-project"
+version = "0.2.9"
+dependencies = [
+ "clipcat-core",
+ "schemars",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.20",
+]
+
+[[package]]
+name = "clipcat-render"
+version = "0.2.9"
+dependencies = [
+ "clipcat-core",
+ "clipcat-effects",
+ "clipcat-vision",
+ "half",
+ "log",
+ "pollster",
+ "wgpu",
+]
+
+[[package]]
+name = "clipcat-server"
+version = "0.2.9"
+dependencies = [
+ "clipcat-api",
+ "getrandom 0.3.4",
+ "prost",
+ "protox",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tokio-stream",
+ "tonic",
+ "tonic-prost",
+ "tonic-prost-build",
+]
+
+[[package]]
+name = "clipcat-speech"
+version = "0.2.9"
+dependencies = [
+ "clipcat-host",
+ "clipcat-media",
+ "clipcat-vision",
+ "log",
+ "ort",
+ "realfft",
+ "serde",
+ "serde_json",
+ "tokenizers",
+ "ureq 2.12.1",
+ "whisper-rs",
+]
+
+[[package]]
+name = "clipcat-text"
+version = "0.2.9"
+dependencies = [
+ "fontdb 0.23.0",
+ "memmap2",
+ "rustybuzz",
+ "tiny-skia 0.12.0",
+ "ttf-parser",
+ "unicode-bidi",
+ "unicode-linebreak",
+ "unicode-script",
+]
+
+[[package]]
+name = "clipcat-vision"
+version = "0.2.9"
+dependencies = [
+ "clipcat-core",
+ "clipcat-project",
+ "ort",
+ "png 0.17.16",
+]
+
+[[package]]
 name = "clru"
 version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1153,276 +1423,6 @@ dependencies = [
  "ryu",
  "serde",
  "static_assertions",
-]
-
-[[package]]
-name = "concat"
-version = "0.2.9"
-dependencies = [
- "block2 0.6.2",
- "concat-api",
- "concat-core",
- "concat-effects",
- "concat-export",
- "concat-host",
- "concat-mcp",
- "concat-media",
- "concat-project",
- "concat-render",
- "concat-server",
- "concat-speech",
- "concat-text",
- "concat-vision",
- "dirs",
- "image",
- "libc",
- "log",
- "objc2 0.6.4",
- "objc2-foundation 0.3.2",
- "opener",
- "pollster",
- "rfd",
- "serde",
- "serde_json",
- "slint",
- "slint-build",
- "toml",
- "wayland-backend",
- "wayland-client",
- "wgpu",
- "winresource",
-]
-
-[[package]]
-name = "concat-android"
-version = "0.2.9"
-dependencies = [
- "android-build",
- "android_logger",
- "concat",
- "jni 0.22.4",
- "libc",
- "log",
- "slint",
-]
-
-[[package]]
-name = "concat-api"
-version = "0.2.9"
-dependencies = [
- "base64 0.22.1",
- "concat-core",
- "concat-effects",
- "concat-export",
- "concat-host",
- "concat-project",
- "png 0.17.16",
- "schemars",
- "serde",
- "serde_json",
- "tempfile",
-]
-
-[[package]]
-name = "concat-cli"
-version = "0.2.9"
-dependencies = [
- "clap",
- "concat-api",
- "concat-core",
- "concat-effects",
- "concat-host",
- "concat-media",
- "concat-render",
- "concat-server",
- "serde_json",
-]
-
-[[package]]
-name = "concat-core"
-version = "0.2.9"
-
-[[package]]
-name = "concat-effects"
-version = "0.2.9"
-dependencies = [
- "concat-core",
- "concat-project",
- "naga",
- "serde",
- "thiserror 2.0.20",
- "toml",
-]
-
-[[package]]
-name = "concat-export"
-version = "0.2.9"
-dependencies = [
- "concat-core",
- "concat-effects",
- "concat-media",
- "concat-project",
- "concat-render",
- "concat-vision",
- "log",
- "serde",
-]
-
-[[package]]
-name = "concat-host"
-version = "0.2.9"
-dependencies = [
- "concat-core",
- "concat-effects",
- "concat-export",
- "concat-media",
- "concat-project",
- "concat-render",
- "concat-text",
- "concat-vision",
- "cpal",
- "libc",
- "log",
- "memmap2",
- "png 0.17.16",
- "rustls",
- "rustls-native-certs",
- "schemars",
- "serde",
- "serde_json",
- "sha2",
- "tempfile",
- "ureq 2.12.1",
- "webpki-roots 0.26.11",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "concat-mcp"
-version = "0.2.9"
-dependencies = [
- "concat-api",
- "concat-server",
- "serde_json",
- "tempfile",
-]
-
-[[package]]
-name = "concat-media"
-version = "0.2.9"
-dependencies = [
- "concat-core",
- "ffmpeg-the-third",
- "libc",
- "log",
- "ndk 0.9.0",
- "resvg",
- "thiserror 2.0.20",
-]
-
-[[package]]
-name = "concat-mobile"
-version = "0.2.9"
-dependencies = [
- "android_logger",
- "concat-core",
- "concat-export",
- "concat-host",
- "concat-media",
- "concat-project",
- "jni-sys 0.3.1",
- "log",
- "ndk 0.9.0",
- "ndk-context",
- "ndk-sys 0.6.0+11769913",
- "pollster",
- "raw-window-handle",
- "thiserror 2.0.20",
- "uniffi",
- "wgpu",
-]
-
-[[package]]
-name = "concat-project"
-version = "0.2.9"
-dependencies = [
- "concat-core",
- "schemars",
- "serde",
- "serde_json",
- "thiserror 2.0.20",
-]
-
-[[package]]
-name = "concat-render"
-version = "0.2.9"
-dependencies = [
- "concat-core",
- "concat-effects",
- "concat-vision",
- "half",
- "log",
- "pollster",
- "wgpu",
-]
-
-[[package]]
-name = "concat-server"
-version = "0.2.9"
-dependencies = [
- "concat-api",
- "getrandom 0.3.4",
- "prost",
- "protox",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
- "tokio-stream",
- "tonic",
- "tonic-prost",
- "tonic-prost-build",
-]
-
-[[package]]
-name = "concat-speech"
-version = "0.2.9"
-dependencies = [
- "concat-host",
- "concat-media",
- "concat-vision",
- "log",
- "ort",
- "realfft",
- "serde",
- "serde_json",
- "tokenizers",
- "ureq 2.12.1",
- "whisper-rs",
-]
-
-[[package]]
-name = "concat-text"
-version = "0.2.9"
-dependencies = [
- "fontdb 0.23.0",
- "memmap2",
- "rustybuzz",
- "tiny-skia 0.12.0",
- "ttf-parser",
- "unicode-bidi",
- "unicode-linebreak",
- "unicode-script",
-]
-
-[[package]]
-name = "concat-vision"
-version = "0.2.9"
-dependencies = [
- "concat-core",
- "concat-project",
- "ort",
- "png 0.17.16",
 ]
 
 [[package]]
