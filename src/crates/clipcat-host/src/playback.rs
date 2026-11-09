@@ -1640,7 +1640,8 @@ where
     use cpal::traits::{DeviceTrait, StreamTrait};
 
     let channels = config.channels as usize;
-    let step = 1.0 / f64::from(config.sample_rate.0);
+    let sample_rate_hz = config.sample_rate.0;
+    let step = 1.0 / f64::from(sample_rate_hz);
 
     // Seed from the world as it is, not from zero: a stream rebuilt mid-
     // playback resumes the same clips at the shared clock's position.
@@ -1652,8 +1653,7 @@ where
     // Active audio scrub state
     let mut scrub_active = false;
     let mut scrub_gen = 0u64;
-    let mut scrub_traj =
-        clipcat_core::scrub::ScrubTrajectory::compute(0.0, 0.0, config.sample_rate.0);
+    let mut scrub_traj = clipcat_core::scrub::ScrubTrajectory::compute(0.0, 0.0, sample_rate_hz);
     let mut scrub_cursor = 0.0f64;
     let mut scrub_frame_idx = 0usize;
     let mut scrub_volume = 1.0f32;
@@ -1711,7 +1711,7 @@ where
                                     let traj = clipcat_core::scrub::ScrubTrajectory::compute(
                                         from,
                                         to,
-                                        config.sample_rate.0,
+                                        sample_rate_hz,
                                     );
                                     scrub_cursor = traj.start_seconds;
                                     scrub_frame_idx = 0;
