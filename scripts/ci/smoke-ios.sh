@@ -215,8 +215,8 @@ done
 
 say "the outcome"
 # The logger's first line, written once the app's own code is running.
-grep -E -q 'Concat [0-9][^ ]* · ios' "$out/console.txt" \
-  || fail "the app's first log line (\"Concat <version> · ios ...\") never reached its output"
+grep -E -q '(ClipCat|Concat) [0-9][^ ]* · ios' "$out/console.txt" \
+  || fail "the app's first log line (\"ClipCat <version> · ios ...\") never reached its output"
 echo "-- the app's output --"
 head -n 40 "$out/console.txt"
 echo

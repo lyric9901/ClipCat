@@ -195,14 +195,14 @@ jobs:
         working-directory: src
         run: |
           set -o pipefail
-          cargo clippy -p concat-server -p concat-cli --features grpc --all-targets -- -D warnings 2>&1 | tee clippy-grpc.log
+          cargo clippy -p clipcat-server -p clipcat-cli --features grpc --all-targets -- -D warnings 2>&1 | tee clippy-grpc.log
       - name: Run the gRPC tests
         timeout-minutes: 10
         working-directory: src
         run: |
           set -o pipefail
           status=0
-          cargo nextest run -p concat-server --features grpc --profile ci 2>&1 | tee nextest-grpc.log || status=$?
+          cargo nextest run -p clipcat-server --features grpc --profile ci 2>&1 | tee nextest-grpc.log || status=$?
           mv target/nextest/ci/junit.xml target/nextest/ci/junit-grpc.xml 2>/dev/null || true
           exit "$status"
 
@@ -372,7 +372,7 @@ jobs:
         shell: bash
         run: |
           status=0
-          cargo nextest run -p concat-host --test export --build-jobs 2 --profile ci --no-capture \
+          cargo nextest run -p clipcat-host --test export --build-jobs 2 --profile ci --no-capture \
             -E 'test(=every_edit_still_exports)' 2>&1 | tee nextest-every-edit.log || status=$?
           mv target/nextest/ci/junit.xml target/nextest/ci/junit-every-edit.xml 2>/dev/null || true
           exit "$status"

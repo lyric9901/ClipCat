@@ -37,13 +37,13 @@ CRATES = ROOT / "src" / "crates"
 # The repository the mirror lives on, and the engine constant that must
 # agree with this file about which release holds it.
 REPO = "jub0t/Concat"
-HOST_MODELS = CRATES / "concat-host" / "src" / "models.rs"
+HOST_MODELS = CRATES / "clipcat-host" / "src" / "models.rs"
 
 # Where each family's table lives in the engine, for --check.
 TABLES = {
-    "cutout": CRATES / "concat-vision" / "src" / "models.rs",
-    "chatterbox": CRATES / "concat-speech" / "src" / "chatterbox.rs",
-    "whisper": CRATES / "concat-speech" / "src" / "transcribe.rs",
+    "cutout": CRATES / "clipcat-vision" / "src" / "models.rs",
+    "chatterbox": CRATES / "clipcat-speech" / "src" / "chatterbox.rs",
+    "whisper": CRATES / "clipcat-speech" / "src" / "transcribe.rs",
 }
 
 # The bundles a release publishes, as build-app.yml and mobile.yml name

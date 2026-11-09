@@ -88,3 +88,5 @@ whisper.dll                    48    0     0      0          0
 # Haswell fails the build.
 concat.exe                     -     -     ~1000  -          -
 concat                         -     -     ~1000  -          -
+clipcat.exe                    -     -     ~1000  -          -
+clipcat                        -     -     ~1000  -          -

@@ -1,0 +1,34 @@
+[package]
+name = "clipcat-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Command line driver for the Concat engine."
+
+# `clipcat` is the editor window's binary; the driver gets the suffix.
+[[bin]]
+name = "clipcat-cli"
+path = "src/main.rs"
+
+[dependencies]
+clipcat-core.workspace = true
+clipcat-media.workspace = true
+clipcat-render.workspace = true
+# The `api` command: the Concat API over stdin and stdout. The `serve`
+# command: the same on a socket.
+clipcat-api.workspace = true
+clipcat-server.workspace = true
+serde_json.workspace = true
+# `preview` draws one effect's card, as the window does; `check` loads
+# packages and runs their probes.
+clipcat-effects.workspace = true
+clipcat-host.workspace = true
+clap.workspace = true
+
+[features]
+# `serve --grpc`. Off by default; see clipcat-server.
+grpc = ["clipcat-server/grpc"]
+
+[lints]
+workspace = true

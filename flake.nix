@@ -115,9 +115,9 @@
     in
     {
       packages = eachSystem (pkgs: rec {
-        default = concat;
-        concat = pkgs.rustPlatform.buildRustPackage {
-          pname = "concat";
+        default = clipcat;
+        clipcat = pkgs.rustPlatform.buildRustPackage {
+          pname = "clipcat";
           version = "0.2.9";
           src = self;
 
@@ -126,7 +126,7 @@
           cargoLock.lockFile = ./src/Cargo.lock;
           cargoBuildFlags = [
             "-p"
-            "concat"
+            "clipcat"
           ];
 
           # The workspace's tests generate their own media through the
@@ -159,12 +159,12 @@
 
           desktopItems = [
             (pkgs.makeDesktopItem {
-              name = "concat";
-              exec = "concat";
-              icon = "concat";
-              desktopName = "Concat";
+              name = "clipcat";
+              exec = "clipcat";
+              icon = "clipcat";
+              desktopName = "ClipCat";
               comment = "Free and open source video editor";
-              startupWMClass = "concat";
+              startupWMClass = "clipcat";
               categories = [
                 "AudioVideo"
                 "AudioVideoEditing"
@@ -173,18 +173,21 @@
           ];
 
           postInstall = ''
-            install -Dm644 assets/concat_logo_512.png \
-              $out/share/icons/hicolor/512x512/apps/concat.png
+            install -Dm644 assets/icons/clipcat_logo_512.png \
+              $out/share/icons/hicolor/512x512/apps/clipcat.png 2>/dev/null || \
+            install -Dm644 assets/clipcat_logo.png \
+              $out/share/icons/hicolor/512x512/apps/clipcat.png
           '';
 
           meta = {
             description = "Free and open source video editor";
-            homepage = "https://github.com/jub0t/Concat";
+            homepage = "https://github.com/lyric9901/ClipCat";
             license = pkgs.lib.licenses.agpl3Plus;
             platforms = systems;
-            mainProgram = "concat";
+            mainProgram = "clipcat";
           };
         };
+        concat = clipcat;
       });
 
       devShells = eachSystem (pkgs: {

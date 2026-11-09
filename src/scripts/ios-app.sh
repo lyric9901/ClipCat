@@ -85,9 +85,9 @@ cat > "$app/Info.plist" <<PLIST
   <key>LSApplicationCategoryType</key><string>public.app-category.video</string>
   <key>UIFileSharingEnabled</key><true/>
   <key>LSSupportsOpeningDocumentsInPlace</key><true/>
-  <key>NSPhotoLibraryUsageDescription</key><string>Concat imports the clips you pick.</string>
-  <key>NSPhotoLibraryAddUsageDescription</key><string>Concat saves your finished videos to Photos.</string>
-  <key>NSMicrophoneUsageDescription</key><string>Concat records voice-over.</string>
+  <key>NSPhotoLibraryUsageDescription</key><string>ClipCat imports the clips you pick.</string>
+  <key>NSPhotoLibraryAddUsageDescription</key><string>ClipCat saves your finished videos to Photos.</string>
+  <key>NSMicrophoneUsageDescription</key><string>ClipCat records voice-over.</string>
   <key>NSHumanReadableCopyright</key><string>AGPL-3.0-or-later. See THIRD_PARTY_NOTICES.md.</string>
 </dict>
 </plist>
