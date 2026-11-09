@@ -1,4 +1,4 @@
-# The Concat sound library
+# The ClipCat sound library
 
 The Library's **Audio** page has a **Concat** shelf of built-in sounds and
 music (#60). Nothing ships inside the app: the shelf reads a manifest from

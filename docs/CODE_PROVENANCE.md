@@ -53,7 +53,7 @@ The repository components are classified into five distinct provenance categorie
 - **Documentation & Legal Architecture:**
   - `README.md` (re-authored with comprehensive cross-platform matrix and technical accuracy).
   - `AUTHORS` (comprehensive attribution of all 50 historical contributors).
-  - `docs/RELEASE_AUDIT.md`, `docs/RELEASE_REPORT.md`, `docs/CODE_PROVENANCE.md`, `docs/BRANDING_MIGRATION_INVENTORY.md`, `docs/BRANDING_MIGRATION_REPORT.md`.
+  - `docs/CODE_PROVENANCE.md`.
 
 ### 3.2. Inherited Upstream Code (Category 2)
 The underlying architecture remains faithful to the robust foundation created by Jareer Abdullah and Concat contributors:
